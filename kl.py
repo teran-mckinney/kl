@@ -12,7 +12,7 @@ License: MIT (see LICENSE for details)
 
 import ctypes
 from ctypes.util import find_library
-from time import sleep
+from time import sleep, time
 
 __author__ = 'Cristian Cabrera'
 __version__ = '4.0.0'
@@ -354,16 +354,24 @@ class EnglishUsaTransformer(BaseTransformer):
 
 class PrintHandler:
     """Handler that uses the print function."""
+    def __init__(self, timestamp=False):
+        self._timestamp = timestamp
+
     def handle(self, value):
+        if self._timestamp is True:
+            self._stream.write(str(time()) + ' ')
         print(value)
 
 
 class FileHandler:
     """Handler that writes in a file."""
-    def __init__(self, stream):
+    def __init__(self, stream, timestamp=False):
         self._stream = stream
+        self._timestamp = timestamp
 
     def handle(self, value):
+        if self._timestamp is True:
+            self._stream.write(str(time()) + ' ')
         self._stream.write(value + '\n')
 
 
@@ -610,6 +618,7 @@ def _parse_args():
     arg('-t', '--transform', choices=['spanish', 'english_usa', 'pt_br'])
     arg('-f', '--file')
     arg('-l', '--line-buffering', action='store_true')
+    arg('--timestamp', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -639,9 +648,9 @@ if __name__ == '__main__':
             f = open(args.file, mode='w', buffering=1)
         else:
             f = open(args.file, mode='w')
-        handler = FileHandler(f)
+        handler = FileHandler(f, args.timestamp)
     else:
-        handler = PrintHandler()
+        handler = PrintHandler(args.timestamp)
 
     kl = Kl(sleep_time=sleep_time, transformer=transformer, handler=handler)
     kl.run()

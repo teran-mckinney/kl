@@ -19,7 +19,7 @@ into your project directory.
 ## CLI usage
 
     usage: kl.py [-h] [-s SLEEP_TIME] [-t {spanish,english_usa,pt_br}] [-f FILE]
-                 [-l]
+                 [-l] [--timestamp]
 
 ### Examples:
 
